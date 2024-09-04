@@ -39,16 +39,6 @@ public_users.get("/", function (req, res) {
   return res.status(300).json({ message: "yet to be implemented" });
 });
 
-// Get the book list using axios
-async function listBooks() {
-  try {
-    await axios.post("http://localhost:5000/", { books });
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-listBooks();
 // Get book details based on ISBN
 public_users.get("/isbn/:isbn", function (req, res) {
   const isbn = req.params.isbn;
@@ -106,6 +96,68 @@ public_users.get("/review/:isbn", function (req, res) {
   }
 
   return res.status(300).json({ message: "Yet to be implemented" });
+});
+
+//using axios to complete all of the tasks above
+
+// list the whole list of books/ async/await
+public_users.get("/axios", async (req, res) => {
+  try {
+    const response = await axios.get("http://localhost:5000");
+    res.json(response.data);
+  } catch {
+    res.sendStatus(401);
+  }
+});
+
+// list books based on ISBN/ async/await
+public_users.get("/axios/isbn/:isbn", async (req, res) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:5000/isbn/${req.params.isbn}`
+    );
+    res.json(response.data);
+  } catch {
+    res.status(500);
+  }
+});
+
+// list books based on authors/ async/await
+public_users.get("/axios/author/:author", async (req, res) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:5000/author/${req.params.author}`
+    );
+    res.json(response.data);
+  } catch {
+    res.status(500);
+  }
+});
+
+// list books based on title/ promises
+public_users.get("/axios/title/:title", (req, res) => {
+  const response = axios
+    .get(`http://localhost:5000/title/${req.params.title}`)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500);
+    });
+});
+
+// list book review based on isbn/ promises
+public_users.get("/axios/review/:isbn", (req, res) => {
+  const response = axios
+    .get(`http://localhost:5000/review/${req.params.isbn}`)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500);
+    });
 });
 
 module.exports.general = public_users;

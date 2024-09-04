@@ -29,6 +29,7 @@ regd_users.post("/login", (req, res) => {
 
   if (isValid(username)) {
     if (authenticatedUser(username, password)) {
+      req.session.user = { username };
       const token = jwt.sign({ username }, "access", { expiresIn: "1h" });
       return res.json({ token });
     }
@@ -39,7 +40,8 @@ regd_users.post("/login", (req, res) => {
 // Add a book review
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  const authHeader = req.headers["authorization"];
+  const token = req.headers["authorization"];
+
   const { review } = req.query;
   const { isbn } = req.params;
 
